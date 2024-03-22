@@ -2,150 +2,128 @@ import random
 import time
 import matplotlib.pyplot as plt
 
+#   binary search tree
 class Node:
     def __init__(self, data):
         self.data = data
         self.leftChild = None
         self.rightChild = None
 
-    def subtree_height(self):
-        # Calculate the height of the subtree rooted at this node
-        left_subtree_height = self.leftChild.subtree_height() if self.leftChild else -1
-        right_subtree_height = self.rightChild.subtree_height() if self.rightChild else -1
-        return 1 + max(left_subtree_height, right_subtree_height)
+    def subtreeHeight(self):
+        # Calculate the height  
+        left_height = -1 if self.leftChild is None else self.leftChild.subtreeHeight()
+        right_height = -1 if self.rightChild is None else self.rightChild.subtreeHeight()
+        return 1 + max(left_height, right_height)
 
+#  SearchTree  
 class SearchTree:
     def __init__(self):
         self.rootNode = None
 
-    def add_node(self, data):
-        # Add a node to the search tree
-        if not self.rootNode:
+    def insert(self, data):
+        # Insert a node with the specified data into the search tree
+        if self.rootNode is None:
             self.rootNode = Node(data)
         else:
-            self._insert_node(self.rootNode, data)
+            self._insertNode(self.rootNode, data)
 
-    def _insert_node(self, currentNode, data):
-        # Helper function to recursively insert a node into the tree
+    def _insertNode(self, currentNode, data):
+        #  recursively insert a node into the tree
         if data < currentNode.data:
             if currentNode.leftChild is None:
                 currentNode.leftChild = Node(data)
             else:
-                self._insert_node(currentNode.leftChild, data)
+                self._insertNode(currentNode.leftChild, data)
         elif data > currentNode.data:
             if currentNode.rightChild is None:
                 currentNode.rightChild = Node(data)
             else:
-                self._insert_node(currentNode.rightChild, data)
+                self._insertNode(currentNode.rightChild, data)
 
-    def node_balance(self, node):
-        # Calculate the balance factor of a node (difference in heights of left and right subtrees)
-        if node is None:
-            return 0
-        left_subtree_height = node.leftChild.subtree_height() if node.leftChild else -1
-        right_subtree_height = node.rightChild.subtree_height() if node.rightChild else -1
-        return left_subtree_height - right_subtree_height
-
-    def compute_balances(self):
-        # Compute the balance factor for each node in the tree
-        balances_list = []
-        self._compute_balances_recursive(self.rootNode, balances_list)
-        return balances_list
-
-    def _compute_balances_recursive(self, currentNode, balances_list):
-        # Helper function to recursively compute balance factors for each node
-        if currentNode is not None:
-            balances_list.append((currentNode.data, self.node_balance(currentNode)))
-            self._compute_balances_recursive(currentNode.leftChild, balances_list)
-            self._compute_balances_recursive(currentNode.rightChild, balances_list)
+    def nodeBalance(self, node):
+        # Calculate the balance factor of a node
+        left_height = -1 if node.leftChild is None else node.leftChild.subtreeHeight()
+        right_height = -1 if node.rightChild is None else node.rightChild.subtreeHeight()
+        return left_height - right_height
 
     def search(self, data):
         # Search for a given data in the tree and measure the time taken
         start_time = time.time()
-        found = self._search_recursive(self.rootNode, data)
+        found = self._searchRecursive(self.rootNode, data)
         end_time = time.time()
         return found, end_time - start_time
 
-    def _search_recursive(self, currentNode, data):
-        # Helper function to recursively search for data in the tree
+    def _searchRecursive(self, currentNode, data):
+        #  recursively search for data in the tree
         if currentNode is None:
             return False
         if data == currentNode.data:
             return True
         elif data < currentNode.data:
-            return self._search_recursive(currentNode.leftChild, data)
+            return self._searchRecursive(currentNode.leftChild, data)
         else:
-            return self._search_recursive(currentNode.rightChild, data)
+            return self._searchRecursive(currentNode.rightChild, data)
 
-    def max_balance(self):
-        # Find the maximum balance factor in the tree
-        _, max_balance = self._max_balance_recursive(self.rootNode)
-        return max_balance
+    def maxBalance(self):
+        #  maximum balance factor 
+        _, maxBalance = self._maxBalanceRecursive(self.rootNode)
+        return maxBalance
 
-    def _max_balance_recursive(self, currentNode):
-        # Helper function to recursively find the maximum balance factor in the tree
+    def _maxBalanceRecursive(self, currentNode):
+        # recursively find the maximum balance factor
         if currentNode is None:
             return None, 0
 
-        _, left_max_balance = self._max_balance_recursive(currentNode.leftChild)
-        _, right_max_balance = self._max_balance_recursive(currentNode.rightChild)
+        _, left_maxBalance = self._maxBalanceRecursive(currentNode.leftChild)
+        _, right_maxBalance = self._maxBalanceRecursive(currentNode.rightChild)
 
-        current_balance = abs(self.node_balance(currentNode))
-        max_balance = max(current_balance, left_max_balance, right_max_balance)
+        current_balance = abs(self.nodeBalance(currentNode))
+        maxBalance = max(current_balance, left_maxBalance, right_maxBalance)
 
-        return currentNode, max_balance
+        return currentNode, maxBalance
 
-# Generate search tasks
-def generate_search_tasks(num_tasks, list_size):
-    # Generate random search tasks
+# random search tasks
+def searchTasksGeneration(num_tasks, listSize):
     tasks = []
-    original_list = list(range(list_size))
+    original = list(range(listSize))
     for _ in range(num_tasks):
-        shuffled_list = original_list.copy()
-        random.shuffle(shuffled_list)
-        tasks.append(shuffled_list)
+        shuffled = original.copy()
+        random.shuffle(shuffled)
+        tasks.append(shuffled)
     return tasks
 
-# Measure performance
-def measure_performance(search_tasks):
-    # Measure the performance of the search tree for each search task
-    performance_results = []
+#  performance of search tasks
+def measurePerformance(searchTasks):
+    performanceResults = []
 
-    for task in search_tasks:
-        my_tree = SearchTree()
+    for task in searchTasks:
+        myTree = SearchTree()
         for number in task:
-            my_tree.add_node(number)
+            myTree.insert(number)
 
-        total_search_time = 0
-        for number in range(1000):
-            _, search_time = my_tree.search(number)
-            total_search_time += search_time
+        averageSearchTime = 0
+        for number in range(listSize):
+            _, searchTime = myTree.search(number)
+            averageSearchTime += searchTime
 
-        average_search_time = total_search_time / 1000
-        max_balance_value = my_tree.max_balance()
-        performance_results.append((average_search_time, max_balance_value))
+        averageTime = averageSearchTime / listSize
+        maxBalance = myTree.maxBalance()
+        performanceResults.append((averageTime, maxBalance))
 
-    return performance_results
+    return performanceResults
 
-# Example usage
-search_tasks = generate_search_tasks(1000, 1000)
-performance_results = measure_performance(search_tasks)
+# performance of search tasks
+listSize = 1000
+searchTasks = searchTasksGeneration(1000, listSize)
+performanceResults = measurePerformance(searchTasks)
 
-# Print the performance results for the first 5 tasks
-for i in range(5):
-    avg_time, max_balance = performance_results[i]
-    print(f"Task {i + 1}: Average Search Time = {avg_time:.6f} seconds, Max Balance = {max_balance}")
-
-
-# Extract absolute balance and search time from performance results
-absolute_balances = [abs(result[1]) for result in performance_results]
-search_times = [result[0] for result in performance_results]
-
-# Create scatterplot
+# scatterplot 
+absoluteBalances = [abs(result[1]) for result in performanceResults]
+searchTimes = [result[0] for result in performanceResults]
 plt.figure(figsize=(8, 6))
-plt.scatter(absolute_balances, search_times, alpha=0.5)
+plt.scatter(absoluteBalances, searchTimes, alpha=0.5)
 plt.title('Search Time vs. Absolute Balance')
 plt.xlabel('Absolute Balance')
-plt.ylabel('Search Time (seconds)')
+plt.ylabel('Search Time (S)')
 plt.grid(True)
 plt.show()
