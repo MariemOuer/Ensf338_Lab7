@@ -1,6 +1,5 @@
 import random
 import time
-import matplotlib.pyplot as plt
 
 class Node:
     def __init__(self, data):
@@ -49,7 +48,14 @@ class SearchTree:
                             pivot.rightChild = Node(data)
                         self.update_balances(self.rootNode)
 
-
+    def node_balance(self, node):
+        # Calculate the balance factor of a node (difference in heights of left and right subtrees)
+        if node is None:
+            return 0
+        left_subtree_height = node.leftChild.subtree_height() if node.leftChild else -1
+        right_subtree_height = node.rightChild.subtree_height() if node.rightChild else -1
+        return left_subtree_height - right_subtree_height
+    
     def _find_pivot(self, data):
         # Find the pivot node for insertion
         parent = None
@@ -80,7 +86,6 @@ class SearchTree:
             if abs(node_balance) > 1:
                 print(f"Case #3 not supported for node {node.data}")
 
-    # 
     def search(self, data):
         # Search for a given data in the tree and measure the time taken
         start_time = time.time()
@@ -140,29 +145,51 @@ class SearchTree:
         elif data > currentNode.data:
             if currentNode.rightChild is None:
                 currentNode.rightChild = Node(data)
-            else:
-                self._insert_node(currentNode.rightChild, data)
 
-    def node_balance(self, node):
-        # Calculate the balance factor of a node (difference in heights of left and right subtrees)
-        if node is None:
-            return 0
-        left_subtree_height = node.leftChild.subtree_height() if node.leftChild else -1
-        right_subtree_height = node.rightChild.subtree_height() if node.rightChild else -1
-        return left_subtree_height - right_subtree_height
-
-
-
-# Test Cases
 def test_cases():
+    # Case 1
+    print("Case 1:")
     tree = SearchTree()
-    print("Test Case 1:")
-    tree.add_node(50)  # Adding a node results in case 1
-    print("Test Case 2:")
-    tree.add_node(25)  # Adding a node results in case 2
-    print("Test Case 3:")
-    tree.add_node(75)  # Adding a node results in case 3
-    print("Test Case 4:")
-    tree.add_node(60)  # Adding a node results in case 3
+    tree.add_node(10)
+    tree.add_node(15)
+    tree.add_node(20)
+    tree.add_node(5)  # This insertion should trigger Case #1
+    tree.add_node(7)
+    print(tree.compute_balances())
+
+    # Case 2
+    print("\nCase 2:")
+    tree = SearchTree()
+    tree.add_node(10)
+    tree.add_node(15)
+    tree.add_node(20)
+    tree.add_node(12)
+    print(tree.compute_balances())
+
+    # Case 3
+    print("\nCase 3:")
+    tree = SearchTree()
+    tree.add_node(10)
+    tree.add_node(15)
+    tree.add_node(20)
+    tree.add_node(5)
+    tree.add_node(7)
+    tree.add_node(12)
+    tree.add_node(17)
+    print(tree.compute_balances())
+
+    # Case 4
+    print("\nCase 4:")
+    tree = SearchTree()
+    tree.add_node(10)
+    tree.add_node(15)
+    tree.add_node(20)
+    tree.add_node(5)
+    tree.add_node(7)
+    tree.add_node(17)
+    print(tree.compute_balances())
 
 test_cases()
+
+
+
