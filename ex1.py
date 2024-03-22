@@ -1,7 +1,7 @@
 import random
 import time
 import matplotlib.pyplot as plt
-
+    
 #   binary search tree
 class Node:
     def __init__(self, data):
@@ -39,7 +39,7 @@ class SearchTree:
                 currentNode.rightChild = Node(data)
             else:
                 self._insertNode(currentNode.rightChild, data)
-
+               
     def nodeBalance(self, node):
         # Calculate the balance factor of a node
         left_height = -1 if node.leftChild is None else node.leftChild.subtreeHeight()
