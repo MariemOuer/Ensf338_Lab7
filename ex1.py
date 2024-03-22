@@ -39,7 +39,8 @@ class SearchTree:
                 currentNode.rightChild = Node(data)
             else:
                 self._insertNode(currentNode.rightChild, data)
-               
+  #Ai decleration : Chatgbt used to aid in the fixing of the _searchRecursive , 
+# _maxBalanceRecursive and measurePerformance functions.         
     def nodeBalance(self, node):
         # Calculate the balance factor of a node
         left_height = -1 if node.leftChild is None else node.leftChild.subtreeHeight()
